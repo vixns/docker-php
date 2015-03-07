@@ -1,4 +1,5 @@
 FROM vixns/php:5.6-fpm
+MAINTAINER Stéphane Cottin <stephane.cottin@vixns.com>
 
 ENV PHLACON_VERSION 1.3.2
 

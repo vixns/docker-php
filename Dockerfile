@@ -1,4 +1,5 @@
 FROM php:5.6-fpm
+MAINTAINER Stéphane Cottin <stephane.cottin@vixns.com>
 
 RUN apt-get update && apt-get install -y file re2c libicu-dev zlib1g-dev libmcrypt-dev libfreetype6-dev \
         libjpeg62-turbo-dev libicu52 libmcrypt4 g++ git && rm -rf /var/lib/apt/lists/*

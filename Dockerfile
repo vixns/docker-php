@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh
@@ -31,13 +31,13 @@ RUN set -x \
     zlib1g-dev libgd-dev \
     libtidy-dev libxslt1-dev libmagic-dev libexif-dev file \
     sqlite3 libsqlite3-dev libxslt-dev \
-    libmhash2 libmhash-dev libc-client-dev libkrb5-dev libssh2-1-dev \
+    libmhash2 libmhash-dev libc-client-dev libkrb5-dev libssh2-1-dev libonig-dev \
     libzip-dev libpcre3 libpcre3-dev \
     poppler-utils ghostscript libmagickwand-6.q16-dev libsnmp-dev libedit-dev libreadline6-dev libsodium-dev \
     freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev libpspell-dev \
     msmtp msmtp-mta
   
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
   docker-php-ext-install gd
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
   docker-php-ext-install imap iconv

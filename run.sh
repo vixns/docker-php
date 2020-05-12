@@ -1,11 +1,18 @@
 #!/bin/sh
 
-cat > /etc/ssmtp/ssmtp.conf << EOF
-root=postmaster
-mailhub=${SMTP_HOST}:${SMTP_PORT-25}
-hostname=$(hostname -f)
-FromLineOverride=YES
+cat > /etc/msmtprc << EOF
+
+account	smtpd
+host	${SMTP_HOST}
+port	${SMTP_PORT-25}
+auth	off
+domain	$(hostname -f)
+account default : smtpd
 
 EOF
 
-/usr/local/sbin/runsvdir-start
+exec 2>&1
+
+export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
+
+exec runsvdir -P /etc/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'

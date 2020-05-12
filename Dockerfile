@@ -1,4 +1,4 @@
-FROM php:7.1-fpm
+FROM php:7.2-fpm
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh

@@ -1,4 +1,4 @@
-FROM php:7.0-fpm
+FROM php:7.1-fpm
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh
@@ -6,12 +6,12 @@ COPY run.sh /run.sh
 ENV TINI_VERSION=0.18.0
 
 RUN set -x \
-	\
-	&& export DEBIAN_FRONTEND=noninteractive \
+  \
+  && export DEBIAN_FRONTEND=noninteractive \
   && apt-get update \
   && apt-get dist-upgrade -y \
   && apt-get install --no-install-recommends -y \
-		runit \
+    runit \
     gnupg \
     git \
     libmemcached-dev \
@@ -36,7 +36,7 @@ RUN set -x \
     poppler-utils ghostscript libmagickwand-6.q16-dev libsnmp-dev libedit-dev libreadline6-dev libsodium-dev \
     freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev libpspell-dev \
     msmtp msmtp-mta
-	
+  
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
   docker-php-ext-install gd
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \

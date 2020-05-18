@@ -42,7 +42,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
   docker-php-ext-install imap iconv
 
-RUN docker-php-ext-install bcmath bz2 calendar ctype curl dba dom fileinfo exif ftp gettext intl json ldap mbstring mysqli pdo pdo_mysql pdo_pgsql pdo_sqlite pgsql pcntl pspell readline simplexml soap zip
+RUN docker-php-ext-install bcmath bz2 calendar ctype curl dba dom fileinfo exif ftp gettext intl json mbstring mysqli pdo pdo_mysql pdo_pgsql pdo_sqlite pgsql pcntl pspell readline simplexml soap zip
 
 # install pecl extension
 RUN pecl install ds && \
@@ -50,6 +50,14 @@ RUN pecl install ds && \
   pecl install memcached && \
   pecl install redis && \
   docker-php-ext-enable imagick memcached redis
+
+# install composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+        && php -r "if (hash_file('sha384', 'composer-setup.php') === 'e0012edf3e80b6978849f5eff0d4b4e4c79ff1609dd1e613307e16318854d24ae64f26d17af3ef0bf7cfb710ca74755a') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
+        && php composer-setup.php \
+        && php -r "unlink('composer-setup.php');" \
+        && mv composer.phar /usr/local/sbin/composer \
+        && chmod +x /usr/local/sbin/composer
 
 RUN apt-get autoremove -y \
 && rm -rf /var/lib/apt/* \

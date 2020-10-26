@@ -5,6 +5,9 @@ echo "deb http://http.debian.net/debian stretch-backports contrib non-free main"
 apt-get update && apt-get --no-install-recommends -t stretch-backports -y dist-upgrade && \
 apt-get install --no-install-recommends -t stretch-backports -y ca-certificates runit file re2c libicu-dev zlib1g-dev libmcrypt-dev libmagickcore-dev libmagickwand-dev libmagick++-dev libjpeg-dev libpng-dev libicu57 libmcrypt4 g++ imagemagick git libssl-dev xfonts-base xfonts-75dpi libfreetype6-dev ssmtp && \
 docker-php-ext-install mysql pdo_mysql mysqli && \
+apt-get install -y libpq-dev && \
+docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
+docker-php-ext-install pdo pdo_pgsql pgsql && \
 mkdir -p /usr/local/etc/php-fpm.d && \
 curl -s -L -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb && \
 dpkg -i /tmp/wkhtmltox.deb && rm /tmp/wkhtmltox.deb && \
@@ -24,12 +27,12 @@ pecl install imagick && \
   rm /usr/local/etc/php-fpm.d/*conf 
 
 # install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-        && php -r "if (hash_file('sha384', 'composer-setup.php') === 'e0012edf3e80b6978849f5eff0d4b4e4c79ff1609dd1e613307e16318854d24ae64f26d17af3ef0bf7cfb710ca74755a') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-        && php composer-setup.php \
-        && php -r "unlink('composer-setup.php');" \
-        && mv composer.phar /usr/local/sbin/composer \
-        && chmod +x /usr/local/sbin/composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" 
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'c31c1e292ad7be5f49291169c0ac8f683499edddcfd4e42232982d0fd193004208a58ff6f353fde0012d35fdd72bc394') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" 
+RUN php composer-setup.php
+RUN php -r "unlink('composer-setup.php');"
+RUN mv composer.phar /usr/local/sbin/composer 
+RUN chmod +x /usr/local/sbin/composer
 
 RUN dpkg --purge libicu-dev libmagickcore-dev libmagickwand-dev libmagick++-dev libssl-dev libfreetype6-dev libmagickcore-6.q16-dev libgraphviz-dev libglib2.0-dev libtiff5-dev libwmf-dev libcairo2-dev libgdk-pixbuf2.0-dev libfontconfig1-dev librsvg2-dev libmagickwand-6.q16-dev libmagick++-6.q16-dev libxml2-dev && \
 apt-get autoremove -y && \

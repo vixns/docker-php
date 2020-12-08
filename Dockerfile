@@ -3,7 +3,7 @@ COPY . /src
 RUN \
 echo "deb http://http.debian.net/debian stretch-backports contrib non-free main" >> /etc/apt/sources.list && \
 apt-get update && apt-get --no-install-recommends -t stretch-backports -y dist-upgrade && \
-apt-get install --no-install-recommends -t stretch-backports -y ca-certificates runit file re2c libicu-dev zlib1g-dev libmcrypt-dev libmagickcore-dev libmagickwand-dev libmagick++-dev libjpeg-dev libpng-dev libicu57 libmcrypt4 g++ imagemagick git libssl-dev xfonts-base xfonts-75dpi libfreetype6-dev ssmtp && \
+apt-get install --no-install-recommends -t stretch-backports -y ca-certificates runit file re2c libicu-dev zlib1g-dev libmcrypt-dev libmagickcore-dev libmagickwand-dev libmagick++-dev libjpeg-dev libpng-dev libicu57 libmcrypt4 g++ imagemagick git libssl-dev xfonts-base xfonts-75dpi libfreetype6-dev ssmtp procps && \
 docker-php-ext-install mysql pdo_mysql mysqli && \
 apt-get install -y libpq-dev && \
 docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
@@ -28,7 +28,7 @@ pecl install imagick && \
 
 # install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" 
-RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'c31c1e292ad7be5f49291169c0ac8f683499edddcfd4e42232982d0fd193004208a58ff6f353fde0012d35fdd72bc394') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" 
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" 
 RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/sbin/composer 

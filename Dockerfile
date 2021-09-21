@@ -2,8 +2,8 @@ FROM php:5.6-fpm
 COPY . /src
 RUN \
 echo "deb http://http.debian.net/debian stretch-backports contrib non-free main" >> /etc/apt/sources.list && \
-apt-get update && apt-get --no-install-recommends -t stretch-backports -y dist-upgrade && \
-apt-get install --no-install-recommends -t stretch-backports -y ca-certificates runit file re2c libicu-dev zlib1g-dev libmcrypt-dev libmagickcore-dev libmagickwand-dev libmagick++-dev libjpeg-dev libpng-dev libicu57 libmcrypt4 g++ imagemagick git libssl-dev xfonts-base xfonts-75dpi libfreetype6-dev ssmtp procps && \
+apt-get update && apt-get --no-install-recommends -t stretch-backports -y --allow-unauthenticated dist-upgrade && \
+apt-get install --no-install-recommends -t stretch-backports -y --allow-unauthenticated ca-certificates runit file re2c libicu-dev zlib1g-dev libmcrypt-dev libmagickcore-dev libmagickwand-dev libmagick++-dev libjpeg-dev libpng-dev libicu57 libmcrypt4 g++ imagemagick git libssl-dev xfonts-base xfonts-75dpi libfreetype6-dev ssmtp procps && \
 docker-php-ext-install mysql pdo_mysql mysqli && \
 apt-get install -y libpq-dev && \
 docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
@@ -24,14 +24,14 @@ pecl install imagick && \
   echo "pdo_mysql.default_socket=/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/pdo_mysql.ini" && \
   echo "mysql.default_socket=/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/mysql.ini" && \
   echo "mysqli.default_socket=/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/mysqli.ini" && \
-  rm /usr/local/etc/php-fpm.d/*conf 
+  rm /usr/local/etc/php-fpm.d/*conf
 
 # install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" 
-RUN php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" 
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
-RUN mv composer.phar /usr/local/sbin/composer 
+RUN mv composer.phar /usr/local/sbin/composer
 RUN chmod +x /usr/local/sbin/composer
 
 RUN dpkg --purge libicu-dev libmagickcore-dev libmagickwand-dev libmagick++-dev libssl-dev libfreetype6-dev libmagickcore-6.q16-dev libgraphviz-dev libglib2.0-dev libtiff5-dev libwmf-dev libcairo2-dev libgdk-pixbuf2.0-dev libfontconfig1-dev librsvg2-dev libmagickwand-6.q16-dev libmagick++-6.q16-dev libxml2-dev && \
@@ -46,7 +46,7 @@ mv /src/php-fpm.sh /etc/service/php-fpm/run && \
 mv /src/runsvdir-start.sh /usr/local/sbin/runsvdir-start && \
 chmod +x /etc/service/php-fpm/run  && \
 rm -rf /src
-COPY run.sh /run.sh 
+COPY run.sh /run.sh
 RUN \
 chmod +x /run.sh
 CMD ["/run.sh"]

@@ -8,6 +8,7 @@ port	${SMTP_PORT-25}
 auth	off
 domain	$(hostname -f)
 account default : smtpd
+from %U@%H
 
 EOF
 

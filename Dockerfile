@@ -1,4 +1,4 @@
-FROM php:8.1.11-fpm-bullseye
+FROM php:8.3-fpm-bookworm
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh

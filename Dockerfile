@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh
@@ -33,15 +33,16 @@ RUN set -x \
     libmhash2 libmhash-dev libc-client-dev libkrb5-dev libssh2-1-dev libonig-dev \
     libzip-dev libpcre3 libpcre3-dev \
     poppler-utils ghostscript libmagickwand-6.q16-dev libsnmp-dev libedit-dev libreadline6-dev libsodium-dev \
-    freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev libpspell-dev \
+    freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev \
     msmtp msmtp-mta
 
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
   docker-php-ext-install gd
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
-  docker-php-ext-install imap iconv
+# Pré-requis : installe libc-client depuis source
+RUN mkdir -p /usr/src/imap && \
+    curl -sSL https://ftp.gnu.org/gnu/inetutils/inetutils-1.9.4.tar.gz | tar -xz -C /usr/src/imap --strip-components=1
 
-RUN docker-php-ext-install bcmath bz2 calendar dba exif gettext intl ldap mysqli pdo_mysql pdo_pgsql pgsql pcntl pspell soap zip
+RUN docker-php-ext-install bcmath bz2 calendar dba exif gettext intl ldap mysqli pdo_mysql pdo_pgsql pgsql pcntl soap zip
 
 # install pecl extension
 RUN pecl install ds && \

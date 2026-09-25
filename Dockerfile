@@ -62,9 +62,9 @@ RUN apt-get autoremove -y \
 && chmod +x /etc/service/php-fpm/run \
 && rm -f /usr/local/etc/php-fpm.d/* \
 && echo "date.timezone=UTC" >> "/usr/local/etc/php/conf.d/timezone.ini" \
-&& echo "pdo_mysql.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/pdo_mysql.ini" \
-&& echo "mysql.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/mysql.ini" \
-&& echo "mysqli.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/mysqli.ini" \
+&& echo "pdo_mysql.default_socket=/var/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/pdo_mysql.ini" \
+&& echo "mysql.default_socket=/var/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/mysql.ini" \
+&& echo "mysqli.default_socket=/var/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/mysqli.ini" \
 && echo "opcache.enable_cli=1" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
 && echo "opcache.memory_consumption=128" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
 && echo "opcache.interned_strings_buffer=8" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \

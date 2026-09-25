@@ -36,7 +36,7 @@ RUN set -x \
     freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev libpspell-dev \
     msmtp msmtp-mta
 
-RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
   docker-php-ext-install gd
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
   docker-php-ext-install imap iconv
@@ -53,6 +53,10 @@ RUN pecl install ds && \
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && chmod +x /usr/local/bin/composer
 
+# install wp-cli
+RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp \
+  && chmod +x /usr/local/bin/wp
+
 RUN apt-get autoremove -y \
 && rm -rf /var/lib/apt/* \
 && chmod +x /etc/service/php-fpm/run \
@@ -61,11 +65,10 @@ RUN apt-get autoremove -y \
 && echo "pdo_mysql.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/pdo_mysql.ini" \
 && echo "mysql.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/mysql.ini" \
 && echo "mysqli.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/mysqli.ini" \
-&& echo "zend_extension=opcache.so" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.enable_cli=1" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.memory_consumption=128" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.interned_strings_buffer=8" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.max_accelerated_files=4000" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
+&& echo "opcache.enable_cli=1" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
+&& echo "opcache.memory_consumption=128" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
+&& echo "opcache.interned_strings_buffer=8" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
+&& echo "opcache.max_accelerated_files=4000" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
 && chmod +x /run.sh
 
 COPY www.conf /usr/local/etc/php-fpm.d/www.conf

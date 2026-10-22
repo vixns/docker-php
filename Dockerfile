@@ -89,8 +89,8 @@ RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
 
 RUN docker-php-ext-install bcmath bz2 calendar dba exif gettext intl ldap mysqli pdo_mysql pdo_pgsql pgsql pcntl pspell soap zip
 
-# install pecl extension
-RUN pecl install ds && \
+# install pecl extension (ds 1.8+ requires PHP 8.2; pin for 7.4)
+RUN pecl install ds-1.6.0 && \
   pecl install imagick && \
   pecl install memcached && \
   pecl install redis && \

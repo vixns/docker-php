@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-bookworm
+FROM php:8.2.35-fpm-trixie
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh

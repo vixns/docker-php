@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-bookworm
+FROM php:8.3.37-fpm-trixie
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh
@@ -30,11 +30,20 @@ RUN set -x \
     zlib1g-dev libgd-dev \
     libtidy-dev libxslt1-dev libmagic-dev libexif-dev file \
     sqlite3 libsqlite3-dev libxslt-dev \
-    libmhash2 libmhash-dev libc-client-dev libkrb5-dev libssh2-1-dev libonig-dev \
-    libzip-dev libpcre3 libpcre3-dev \
+    libmhash2 libmhash-dev libkrb5-dev libssh2-1-dev libonig-dev \
+    libzip-dev libpcre2-dev \
     poppler-utils ghostscript libmagickwand-6.q16-dev libsnmp-dev libedit-dev libreadline6-dev libsodium-dev \
     freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev libpspell-dev \
-    msmtp msmtp-mta
+    msmtp msmtp-mta \
+    libpam0g-dev sgml-base krb5-multidev
+
+# trixie dropped uw-imap; these bookworm debs still provide libc-client for ext/imap
+RUN set -eux; \
+  curl -fsSL -o /tmp/mlock.deb http://deb.debian.org/debian/pool/main/u/uw-imap/mlock_8%3a2007f~dfsg-7+b2_amd64.deb; \
+  curl -fsSL -o /tmp/libc-client.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e_8%3a2007f~dfsg-7+b2_amd64.deb; \
+  curl -fsSL -o /tmp/libc-client-dev.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e-dev_8%3a2007f~dfsg-7+b2_amd64.deb; \
+  dpkg -i /tmp/mlock.deb /tmp/libc-client.deb /tmp/libc-client-dev.deb; \
+  rm -f /tmp/mlock.deb /tmp/libc-client.deb /tmp/libc-client-dev.deb
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
   docker-php-ext-install gd

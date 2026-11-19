@@ -39,9 +39,9 @@ RUN set -x \
 
 # trixie dropped uw-imap; these bookworm debs still provide libc-client for ext/imap
 RUN set -eux; \
-  curl -fsSL -o /tmp/mlock.deb http://deb.debian.org/debian/pool/main/u/uw-imap/mlock_8%3a2007f~dfsg-7+b2_amd64.deb; \
-  curl -fsSL -o /tmp/libc-client.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e_8%3a2007f~dfsg-7+b2_amd64.deb; \
-  curl -fsSL -o /tmp/libc-client-dev.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e-dev_8%3a2007f~dfsg-7+b2_amd64.deb; \
+  curl -fsSL -o /tmp/mlock.deb http://deb.debian.org/debian/pool/main/u/uw-imap/mlock_2007f~dfsg-7+b2_amd64.deb; \
+  curl -fsSL -o /tmp/libc-client.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e_2007f~dfsg-7+b2_amd64.deb; \
+  curl -fsSL -o /tmp/libc-client-dev.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e-dev_2007f~dfsg-7+b2_amd64.deb; \
   dpkg -i /tmp/mlock.deb /tmp/libc-client.deb /tmp/libc-client-dev.deb; \
   rm -f /tmp/mlock.deb /tmp/libc-client.deb /tmp/libc-client-dev.deb
 

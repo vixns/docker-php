@@ -48,7 +48,7 @@ RUN set -eux; \
   rm -f /tmp/go-pear.phar
 
 # PHP 8.6 removed the XtOffsetOf macro that current PECL releases still call.
-RUN printf '\n#ifndef XtOffsetOf\n#define XtOffsetOf(type, member) offsetof(type, member)\n#endif\n' >> /usr/local/include/php/main/php.h
+RUN printf '\n#ifndef XtOffsetOf\n#define XtOffsetOf(type, member) offsetof(type, member)\n#endif\n#ifndef zval_dtor\n#define zval_dtor(zvalue) zval_ptr_dtor_nogc(zvalue)\n#endif\n' >> /usr/local/include/php/main/php.h
 # ds 2.0.0 calls zend_parse_parameter, removed in PHP 8.6, and was never enabled.
 RUN pecl install imagick && \
   pecl install memcached && \

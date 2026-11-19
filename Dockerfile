@@ -47,8 +47,10 @@ RUN set -eux; \
   printf '\n\n' | php /tmp/go-pear.phar; \
   rm -f /tmp/go-pear.phar
 
-# ds does not compile on PHP 8.6 (XtOffsetOf removed) and was never enabled.
-RUN pecl install imagick && \
+# PHP 8.6 removed the XtOffsetOf macro that current PECL releases still call.
+RUN printf '\n#ifndef XtOffsetOf\n#define XtOffsetOf(type, member) offsetof(type, member)\n#endif\n' >> /usr/local/include/php/main/php.h
+RUN pecl install ds && \
+  pecl install imagick && \
   pecl install memcached && \
   pecl install redis && \
   docker-php-ext-enable imagick memcached redis

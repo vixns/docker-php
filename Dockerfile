@@ -1,4 +1,4 @@
-FROM php:8.2.36-fpm-trixie
+FROM php:8.6.0-fpm-trixie
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh
@@ -33,24 +33,13 @@ RUN set -x \
     libmhash2 libmhash-dev libkrb5-dev libssh2-1-dev libonig-dev \
     libzip-dev libpcre2-dev \
     poppler-utils ghostscript libmagickwand-6.q16-dev libsnmp-dev libedit-dev libreadline6-dev libsodium-dev \
-    freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev libpspell-dev \
-    msmtp msmtp-mta \
-    libpam0g-dev sgml-base krb5-multidev
-
-# trixie dropped uw-imap; these bookworm debs still provide libc-client for ext/imap
-RUN set -eux; \
-  curl -fsSL -o /tmp/mlock.deb http://deb.debian.org/debian/pool/main/u/uw-imap/mlock_8%3a2007f~dfsg-7+b2_amd64.deb; \
-  curl -fsSL -o /tmp/libc-client.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e_8%3a2007f~dfsg-7+b2_amd64.deb; \
-  curl -fsSL -o /tmp/libc-client-dev.deb http://deb.debian.org/debian/pool/main/u/uw-imap/libc-client2007e-dev_8%3a2007f~dfsg-7+b2_amd64.deb; \
-  dpkg -i /tmp/mlock.deb /tmp/libc-client.deb /tmp/libc-client-dev.deb; \
-  rm -f /tmp/mlock.deb /tmp/libc-client.deb /tmp/libc-client-dev.deb
+    freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev \
+    msmtp msmtp-mta
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
   docker-php-ext-install gd
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
-  docker-php-ext-install imap iconv
 
-RUN docker-php-ext-install bcmath bz2 calendar dba exif gettext intl ldap mysqli pdo_mysql pdo_pgsql pgsql pcntl pspell soap zip
+RUN docker-php-ext-install bcmath bz2 calendar dba exif gettext intl ldap mysqli pdo_mysql pdo_pgsql pgsql pcntl soap zip
 
 # install pecl extension
 RUN pecl install ds && \

@@ -41,6 +41,12 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
 
 RUN docker-php-ext-install bcmath bz2 calendar dba exif gettext intl ldap mysqli pdo_mysql pdo_pgsql pgsql pcntl soap zip
 
+# PHP 8.6 official images no longer ship PEAR.
+RUN set -eux; \
+  curl -fsSL -o /tmp/go-pear.phar https://pear.php.net/go-pear.phar; \
+  printf '\n\n' | php /tmp/go-pear.phar; \
+  rm -f /tmp/go-pear.phar
+
 # install pecl extension
 RUN pecl install ds && \
   pecl install imagick && \

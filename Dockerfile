@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-bookworm
+FROM php:8.5.13-fpm-trixie
 
 COPY php-run /etc/service/php-fpm/run
 COPY run.sh /run.sh
@@ -30,17 +30,14 @@ RUN set -x \
     zlib1g-dev libgd-dev \
     libtidy-dev libxslt1-dev libmagic-dev libexif-dev file \
     sqlite3 libsqlite3-dev libxslt-dev \
-    libmhash2 libmhash-dev libc-client-dev libkrb5-dev libssh2-1-dev libonig-dev \
-    libzip-dev libpcre3 libpcre3-dev \
+    libmhash2 libmhash-dev libkrb5-dev libssh2-1-dev libonig-dev \
+    libzip-dev libpcre2-dev \
     poppler-utils ghostscript libmagickwand-6.q16-dev libsnmp-dev libedit-dev libreadline6-dev libsodium-dev \
     freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev \
     msmtp msmtp-mta
 
-RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
   docker-php-ext-install gd
-# Pré-requis : installe libc-client depuis source
-RUN mkdir -p /usr/src/imap && \
-    curl -sSL https://ftp.gnu.org/gnu/inetutils/inetutils-1.9.4.tar.gz | tar -xz -C /usr/src/imap --strip-components=1
 
 RUN docker-php-ext-install bcmath bz2 calendar dba exif gettext intl ldap mysqli pdo_mysql pdo_pgsql pgsql pcntl soap zip
 
@@ -54,19 +51,22 @@ RUN pecl install ds && \
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && chmod +x /usr/local/bin/composer
 
+# install wp-cli
+RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp \
+  && chmod +x /usr/local/bin/wp
+
 RUN apt-get autoremove -y \
 && rm -rf /var/lib/apt/* \
 && chmod +x /etc/service/php-fpm/run \
 && rm -f /usr/local/etc/php-fpm.d/* \
 && echo "date.timezone=UTC" >> "/usr/local/etc/php/conf.d/timezone.ini" \
-&& echo "pdo_mysql.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/pdo_mysql.ini" \
-&& echo "mysql.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/mysql.ini" \
-&& echo "mysqli.default_socket=/run/mysqld/mysql.sock" >> "/usr/local/etc/php/conf.d/mysqli.ini" \
-&& echo "zend_extension=opcache.so" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.enable_cli=1" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.memory_consumption=128" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.interned_strings_buffer=8" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
-&& echo "opcache.max_accelerated_files=4000" >> "/usr/local/etc/php/conf.d/ext-opcache.ini" \
+&& echo "pdo_mysql.default_socket=/var/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/pdo_mysql.ini" \
+&& echo "mysql.default_socket=/var/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/mysql.ini" \
+&& echo "mysqli.default_socket=/var/run/mysqld/mysqld.sock" >> "/usr/local/etc/php/conf.d/mysqli.ini" \
+&& echo "opcache.enable_cli=1" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
+&& echo "opcache.memory_consumption=128" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
+&& echo "opcache.interned_strings_buffer=8" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
+&& echo "opcache.max_accelerated_files=4000" >> "/usr/local/etc/php/conf.d/vixns-opcache.ini" \
 && chmod +x /run.sh
 
 COPY www.conf /usr/local/etc/php-fpm.d/www.conf

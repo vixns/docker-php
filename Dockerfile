@@ -49,11 +49,20 @@ RUN set -eux; \
 
 # PHP 8.6 removed the XtOffsetOf macro that current PECL releases still call.
 RUN printf '\n#ifndef XtOffsetOf\n#define XtOffsetOf(type, member) offsetof(type, member)\n#endif\n#ifndef zval_dtor\n#define zval_dtor(zvalue) zval_ptr_dtor_nogc(zvalue)\n#endif\n' >> /usr/local/include/php/main/php.h
+# Released memcached 3.4.0 and redis 6.3.0 do not accept zend_string session paths.
 # ds 2.0.0 calls zend_parse_parameter, removed in PHP 8.6, and was never enabled.
-RUN pecl install imagick && \
-  pecl install memcached && \
-  pecl install redis && \
-  docker-php-ext-enable imagick memcached redis
+RUN set -eux; \
+  pecl install imagick; \
+  curl -fsSL -o /tmp/memcached.tar.gz https://github.com/php-memcached-dev/php-memcached/archive/0b52d3657140750fa0eddd20cdbfc6edc8fbdadd.tar.gz; \
+  tar -xzf /tmp/memcached.tar.gz -C /tmp; \
+  cd /tmp/php-memcached-0b52d3657140750fa0eddd20cdbfc6edc8fbdadd; \
+  phpize; ./configure; make -j"$(nproc)"; make install; \
+  curl -fsSL -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/5b60b125aba347159b0c9c319296fbb3c5ed9214.tar.gz; \
+  tar -xzf /tmp/redis.tar.gz -C /tmp; \
+  cd /tmp/phpredis-5b60b125aba347159b0c9c319296fbb3c5ed9214; \
+  phpize; ./configure; make -j"$(nproc)"; make install; \
+  docker-php-ext-enable imagick memcached redis; \
+  rm -rf /tmp/memcached.tar.gz /tmp/redis.tar.gz /tmp/php-memcached-* /tmp/phpredis-*
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && chmod +x /usr/local/bin/composer

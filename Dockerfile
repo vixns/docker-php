@@ -47,9 +47,8 @@ RUN set -eux; \
   printf '\n\n' | php /tmp/go-pear.phar; \
   rm -f /tmp/go-pear.phar
 
-# install pecl extension
-RUN pecl install ds && \
-  pecl install imagick && \
+# ds does not compile on PHP 8.6 (XtOffsetOf removed) and was never enabled.
+RUN pecl install imagick && \
   pecl install memcached && \
   pecl install redis && \
   docker-php-ext-enable imagick memcached redis
